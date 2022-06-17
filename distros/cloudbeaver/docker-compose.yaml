@@ -1,0 +1,78 @@
+version: '3.7'
+# Settings and configurations that are common for all containers
+
+services:
+    reverse-proxy:
+    # The official v2 Traefik docker image
+      image: traefik:v2.2
+    # Enables the web UI and tells Traefik to listen to docker
+      container_name: traefik
+      command:
+        - "--api.insecure=true"
+        - "--providers.docker=true"
+        - "--providers.docker.exposedbydefault=false"
+        - --providers.docker.network=traefik
+        - "--entrypoints.web.address=:80"
+        - "--entrypoints.websecure.address=:443"
+        - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+        - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+        - "--entrypoints.web.http.redirections.entryPoint.priority=10" # disable permanent forwarding for every route
+        - --providers.file.filename=/var/traefik2/certs/certificates.toml
+        - --providers.file.watch=true
+      hostname: ${hostname}
+      networks:
+        - traefik
+      ports:
+        - 80:80
+        - 443:443
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        - "${CONFIGURATION_PATH}/configuration/files:/var/traefik2/certs"
+        - "${CONFIGURATION_PATH}/configuration/:/configuration/"
+
+    postgres:
+      networks:
+        - traefik
+      container_name: postgres
+      ports:
+        - "5433:5432"
+      image: postgres:10.13
+      restart: unless-stopped
+
+      environment:
+        - "LC_ALL=C.UTF-8"
+        - "POSTGRES_DB"
+        - "POSTGRES_USER"
+        - "POSTGRES_PASSWORD"
+        - "POSTGRES_PORT"
+      volumes:
+       - ${CONFIGURATION_PATH}/database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+       - ${POSTGRESTMP}/:/mnttmp/
+       #- /extdisk/database-data-demo:/var/lib/postgresql/data/
+
+    cloudbeaver:
+      networks:
+        - traefik
+      image: dbeaver/cloudbeaver:latest
+      container_name: cloudbeaver
+      restart: always
+      environment:
+        - "APP_HOST=172.17.0.1"
+        - "APP_USER=cbadmin"
+      ports:
+        - '8978:8978'
+      volumes:
+        - ${CONFIGURATION_PATH}/cloudbeaver:/opt/cloudbeaver/workspace
+        - ./configs/cloudbeaver.conf:/opt/cloudbeaver/conf/cloudbeaver.conf
+        - ${CONFIGURATION_PATH}/secrets/db_dataverse:/root/.pgpass
+      labels:
+        - "traefik.enable=true"
+        - traefik.http.routers.cloudbeaver.rule=Host(`${traefikhost}`)
+        - traefik.http.routers.cloudbeaver.tls=true
+        - traefik.http.routers.cloudbeaver.entrypoints=websecure
+        - "traefik.http.services.cloudbeaver.loadbalancer.server.port=8978"
+
+networks:
+  traefik:
+    external: true
