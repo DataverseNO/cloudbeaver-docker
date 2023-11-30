@@ -4,7 +4,7 @@ version: '3.7'
 services:
     reverse-proxy:
     # The official v2 Traefik docker image
-      image: traefik:v2.10.3
+      image: traefik:v2.10.6
     # Enables the web UI and tells Traefik to listen to docker
       container_name: traefik
       command:
@@ -37,7 +37,7 @@ services:
       container_name: postgres
       ports:
         - "5433:5432"
-      image: postgres:15.3
+      image: postgres:15.5
       restart: unless-stopped
 
       environment:
@@ -54,7 +54,7 @@ services:
     cloudbeaver:
       networks:
         - traefik
-      image: dbeaver/cloudbeaver:latest
+      image: dbeaver/cloudbeaver:23.2.5
       container_name: cloudbeaver
       restart: always
       environment:
