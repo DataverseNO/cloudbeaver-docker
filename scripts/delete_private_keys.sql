@@ -13,6 +13,7 @@ ALTER TABLE public.fileaccessrequests DROP CONSTRAINT fk_fileaccessrequests_auth
 ALTER TABLE public.workflowcomment DROP CONSTRAINT fk_workflowcomment_authenticateduser_id ;
 ALTER TABLE public.datasetlock DROP CONSTRAINT fk_datasetlock_user_id ;
 ALTER TABLE public.savedsearch DROP CONSTRAINT fk_savedsearch_creator_id ;
+ALTER TABLE public.guestbookresponse DROP CONSTRAINT fk_guestbookresponse_authenticateduser_id ;
 
 DELETE FROM public.actionlogrecord;
 DELETE FROM public.oauth2tokendata;
