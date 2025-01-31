@@ -1,3 +1,19 @@
+ALTER TABLE public.authenticateduser DROP CONSTRAINT authenticateduser_useridentifier_key;
+ALTER TABLE public.authenticateduser DROP CONSTRAINT authenticateduser_email_key;
+ALTER TABLE public.explicitgroup_authenticateduser DROP CONSTRAINT explicitgroup_authenticateduser_containedauthenticatedusers_id;
+ALTER TABLE public.apitoken DROP CONSTRAINT fk_apitoken_authenticateduser_id;
+ALTER TABLE public.authenticateduserlookup DROP CONSTRAINT authenticateduserlookup_authenticateduser_id_key;
+ALTER TABLE public.authenticateduserlookup DROP CONSTRAINT fk_authenticateduserlookup_authenticateduser_id;
+ALTER TABLE public.usernotification DROP CONSTRAINT fk_usernotification_requestor_id ;
+ALTER TABLE public.usernotification DROP CONSTRAINT fk_usernotification_user_id ;
+ALTER TABLE public.datasetversionuser DROP CONSTRAINT fk_datasetversionuser_authenticateduser_id ;
+ALTER TABLE public.dvobject DROP CONSTRAINT fk_dvobject_creator_id ;
+ALTER TABLE public.dvobject DROP CONSTRAINT fk_dvobject_releaseuser_id ;
+ALTER TABLE public.fileaccessrequests DROP CONSTRAINT fk_fileaccessrequests_authenticated_user_id ;
+ALTER TABLE public.workflowcomment DROP CONSTRAINT fk_workflowcomment_authenticateduser_id ;
+ALTER TABLE public.datasetlock DROP CONSTRAINT fk_datasetlock_user_id ;
+ALTER TABLE public.savedsearch DROP CONSTRAINT fk_savedsearch_creator_id ;
+
 DELETE FROM public.actionlogrecord;
 DELETE FROM public.oauth2tokendata;
 DELETE FROM public.authenticationproviderrow;
