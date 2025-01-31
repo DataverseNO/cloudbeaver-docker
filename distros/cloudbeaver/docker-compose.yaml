@@ -49,6 +49,7 @@ services:
       volumes:
        - ${CONFIGURATION_PATH}/database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
        - ${POSTGRESTMP}/:/mnttmp/
+       - ${POSTGRESSCRIPTS}/:/scripts/
        #- /extdisk/database-data-demo:/var/lib/postgresql/data/
 
     cloudbeaver:
